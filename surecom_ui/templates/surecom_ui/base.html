@@ -87,8 +87,13 @@
     {% include "surecom_ui/_messages.html" %}
 {% endblock %}
 
-{# Pages that manage their own full-height layout (e.g. a split map view)
-   should override `main_wrapper` to drop the centred container. #}
+{% comment %}
+    Pages that manage their own full-height layout (e.g. a split map view)
+    should override main_wrapper to drop the centred container.
+
+    Multi-line notes must use this tag: Django's hash-style comment is
+    single-line only and renders as literal text if wrapped.
+{% endcomment %}
 {% block main_wrapper %}
     <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6">
         {% block content %}{% endblock %}
