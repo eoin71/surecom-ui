@@ -116,14 +116,55 @@
 
   /* ── Forms ──────────────────────────────────────────────────────────── */
   .su-label { @apply block text-sm font-medium text-gray-700 mb-1; }
-  .su-input {
+
+  /* Shared field shape. Declared across a selector list because @apply only
+     accepts utilities, so .su-select cannot @apply .su-input. */
+  .su-input,
+  .su-select,
+  .su-textarea {
     @apply block w-full px-3 py-2 text-sm
            bg-white border border-gray-300 rounded
            placeholder:text-gray-400
            focus:border-brand-500 focus:ring-1 focus:ring-brand-500 focus:outline-none;
   }
+
+  /* Leave room for the native dropdown arrow. */
+  .su-select { @apply pr-8; }
+
+  .su-textarea { @apply min-h-20; }
+
+  /* Element-qualified deliberately. Django's CheckboxSelectMultiple copies its
+     attrs onto the group's wrapper <div> as well as each <input>, and an
+     unqualified rule would shrink the whole group to a 1rem bordered box. */
+  input.su-checkbox {
+    @apply size-4 shrink-0 rounded border-gray-300 text-brand-600
+           focus:ring-2 focus:ring-brand-500 cursor-pointer;
+  }
+
+  input.su-radio {
+    @apply size-4 shrink-0 border-gray-300 text-brand-600
+           focus:ring-2 focus:ring-brand-500 cursor-pointer;
+  }
+
+  /* <input type="file"> cannot be styled like a text input; the button is a
+     pseudo-element reached through Tailwind's file: modifier. */
+  .su-file {
+    @apply block w-full text-sm text-gray-600
+           border border-gray-300 rounded bg-white
+           file:mr-3 file:py-2 file:px-3 file:border-0
+           file:text-sm file:font-medium
+           file:bg-gray-100 file:text-gray-700 file:cursor-pointer
+           hover:file:bg-gray-200;
+  }
+
   .su-help  { @apply mt-1 text-xs text-gray-500; }
   .su-error { @apply mt-1 text-xs text-red-600; }
+
+  /* Section heading inside a long form. */
+  .su-fieldset-title {
+    @apply text-base font-semibold text-gray-900
+           border-b border-gray-200 pb-2 mb-4;
+  }
 
   /* ── Alerts ─────────────────────────────────────────────────────────── */
   .su-alert,
