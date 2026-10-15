@@ -13,7 +13,15 @@ register = template.Library()
 ICON_DIR = pathlib.Path(__file__).resolve().parent.parent / "icons"
 
 _SVG_OPEN = re.compile(r"<svg\b([^>]*)>", re.IGNORECASE)
-_CLASS_ATTR = re.compile(r'\sclass\s*=\s*"[^"]*"', re.IGNORECASE)
+
+# Attributes this tag sets itself, stripped from the source first. Files
+# downloaded from heroicons.com ship aria-hidden="true" and data-slot="icon";
+# leaving aria-hidden in place would hide a *labelled* icon from screen readers,
+# and duplicate attributes are invalid HTML.
+_MANAGED_ATTRS = re.compile(
+    r'\s(?:class|aria-hidden|aria-label|role|focusable|data-slot)\s*=\s*"[^"]*"',
+    re.IGNORECASE,
+)
 
 
 @functools.lru_cache(maxsize=256)
@@ -53,7 +61,7 @@ def icon(name: str, css_class: str = "size-4", label: str = "") -> str:
         extra = ' aria-hidden="true" focusable="false"'
 
     def _rewrite(match: re.Match[str]) -> str:
-        attrs = _CLASS_ATTR.sub("", match.group(1))
+        attrs = _MANAGED_ATTRS.sub("", match.group(1))
         return f'<svg{attrs} class="{escape(css_class)}"{extra}>'
 
     return mark_safe(_SVG_OPEN.sub(_rewrite, svg, count=1))

@@ -227,11 +227,28 @@ No code change needed — the tag loads by filename and caches.
 An unknown name renders an HTML comment instead of raising, so a typo can't
 take a page down.
 
-The seed set is deliberately small (`x-mark`, `plus`, `chevron-down`,
-`chevron-right`, `check`, `magnifying-glass`). RAMS leans on icons heavily, so
-expect to add a batch during its migration — `map`, `document-text`,
-`user-circle`, `cog-6-tooth`, `shield-check`, `trash`, `pencil-square`,
-`exclamation-triangle`.
+Attributes the tag manages itself — `class`, `aria-hidden`, `aria-label`,
+`role`, `focusable`, `data-slot` — are stripped from the source file first.
+Heroicons downloads ship `aria-hidden="true"`, which would otherwise hide a
+*labelled* icon from screen readers.
+
+### The set, and the Bootstrap mapping
+
+48 icons ship, covering everything SurecomDB and RAMS Generator use.
+
+`surecom_ui/icon_map.py` holds the Bootstrap Icons → Heroicons name map used
+when migrating RAMS away from Bootstrap, kept as data so the substitution is
+auditable. Heroicons is a far smaller set (~300 vs ~2,000), so twelve entries
+are approximations — each is annotated in that file. The notable ones:
+
+| Bootstrap | Heroicon | Loses |
+|---|---|---|
+| `file-earmark-pdf` / `file-earmark-word` | `document-text` | the format cue; both become the same glyph |
+| `check-square` | `check-circle` | square checkbox shape |
+| `hourglass-split` | `clock` | "in progress" sense |
+| `save` | `document-arrow-down` | floppy/save metaphor |
+| `hospital` | `building-office-2` | hospital meaning |
+| `gear-fill` / `lock-fill` | `cog-6-tooth` / `lock-closed` | the solid variant — only outline ships |
 
 ---
 
