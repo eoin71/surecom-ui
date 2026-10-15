@@ -1,0 +1,29 @@
+{% comment %}
+Render a single Django form field with shared label/help/error styling.
+
+    {% for field in form %}
+        {% include "surecom_ui/components/field.html" with field=field %}
+    {% endfor %}
+
+The widget itself needs the `su-input` class, which is applied in the form's
+__init__ or via a widget attr — this template only owns the surrounding
+label, help text and errors.
+{% endcomment %}
+<div class="mb-4">
+    {% if field.label %}
+        <label for="{{ field.id_for_label }}" class="su-label">
+            {{ field.label }}
+            {% if field.field.required %}<span class="text-red-500">*</span>{% endif %}
+        </label>
+    {% endif %}
+
+    {{ field }}
+
+    {% if field.help_text %}
+        <p class="su-help">{{ field.help_text }}</p>
+    {% endif %}
+
+    {% for error in field.errors %}
+        <p class="su-error">{{ error }}</p>
+    {% endfor %}
+</div>

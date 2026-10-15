@@ -1,0 +1,190 @@
+/* ==========================================================================
+   surecom-ui — shared design system
+   Imported by each app's generated input.css (see surecom_ui/build.py).
+   Requires Tailwind v4, which is configured in CSS rather than JS.
+   ========================================================================== */
+
+@theme {
+  /* ── Brand ──────────────────────────────────────────────────────────── */
+  --color-brand-50:  oklch(0.97 0.014 254.6);
+  --color-brand-100: oklch(0.93 0.032 255.6);
+  --color-brand-200: oklch(0.88 0.059 254.1);
+  --color-brand-300: oklch(0.81 0.101 251.8);
+  --color-brand-400: oklch(0.71 0.143 254.6);
+  --color-brand-500: oklch(0.62 0.188 259.8);
+  --color-brand-600: oklch(0.55 0.212 262.9);
+  --color-brand-700: oklch(0.49 0.2 264.1);
+  --color-brand-800: oklch(0.42 0.17 265.6);
+  --color-brand-900: oklch(0.38 0.136 265.5);
+
+  /* ── Chrome (nav / footer surfaces) ─────────────────────────────────── */
+  --color-chrome-bg:    oklch(0.21 0.006 285.9);
+  --color-chrome-hover: oklch(0.37 0.013 285.8);
+  --color-chrome-ink:   oklch(0.87 0.006 286.3);
+
+  /* ── Layout ─────────────────────────────────────────────────────────── */
+  --spacing-nav: 3.5rem;
+
+  /* ── Type ───────────────────────────────────────────────────────────── */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Non-Tailwind tokens, for hand-written CSS and inline styles. */
+:root {
+  --su-border: oklch(0.92 0.004 286.3);
+  --su-highlight: oklch(0.97 0.08 100);
+  --su-nav-height: 3.5rem;
+}
+
+/* ==========================================================================
+   Components
+   ========================================================================== */
+
+@layer components {
+
+  /* ── Buttons ──────────────────────────────────────────────────────────
+     Base class carries shape and interaction; a variant supplies colour. */
+  .su-btn {
+    @apply inline-flex items-center justify-center gap-1.5
+           px-3 py-1.5 text-sm font-medium rounded
+           transition-colors cursor-pointer
+           focus-visible:outline-2 focus-visible:outline-offset-2
+           focus-visible:outline-brand-500
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .su-btn-primary  { @apply su-btn bg-brand-600 text-white hover:bg-brand-700; }
+  .su-btn-secondary{ @apply su-btn bg-white text-gray-700 border border-gray-300 hover:bg-gray-50; }
+  .su-btn-danger   { @apply su-btn bg-red-600 text-white hover:bg-red-700; }
+  .su-btn-ghost    { @apply su-btn text-gray-600 hover:text-gray-900 hover:bg-gray-100; }
+
+  /* ── Cards ──────────────────────────────────────────────────────────── */
+  .su-card {
+    @apply bg-white border border-gray-200 rounded-lg shadow-sm;
+  }
+  .su-card-header {
+    @apply px-4 py-3 border-b border-gray-200 flex items-center justify-between gap-2;
+  }
+  .su-card-body { @apply p-4; }
+  .su-card-footer {
+    @apply px-4 py-3 border-t border-gray-200 bg-gray-50 rounded-b-lg;
+  }
+
+  /* ── Badges ─────────────────────────────────────────────────────────── */
+  .su-badge {
+    @apply inline-flex items-center px-1.5 py-0.5 text-xs font-semibold rounded;
+  }
+  .su-badge-neutral { @apply su-badge bg-gray-100 text-gray-700; }
+  .su-badge-brand   { @apply su-badge bg-brand-500 text-white; }
+  .su-badge-warning { @apply su-badge bg-yellow-400 text-black; }
+  .su-badge-success { @apply su-badge bg-green-100 text-green-800; }
+  .su-badge-danger  { @apply su-badge bg-red-100 text-red-800; }
+
+  /* ── Tables ─────────────────────────────────────────────────────────── */
+  .su-table { @apply w-full text-sm text-left border-collapse; }
+  .su-table thead th {
+    @apply px-3 py-2 bg-gray-50 border-b border-gray-200
+           text-xs font-semibold uppercase tracking-wide text-gray-500
+           sticky top-0 z-10;
+  }
+  .su-table tbody td {
+    @apply px-3 py-2 border-b border-gray-100 align-top;
+  }
+  .su-table tbody tr:hover td { @apply bg-gray-50; }
+
+  /* Used to flash a row when it is selected from the map. */
+  .su-row-highlight td {
+    background-color: var(--su-highlight) !important;
+    transition: background-color 0.3s ease;
+  }
+
+  /* ── Forms ──────────────────────────────────────────────────────────── */
+  .su-label { @apply block text-sm font-medium text-gray-700 mb-1; }
+  .su-input {
+    @apply block w-full px-3 py-2 text-sm
+           bg-white border border-gray-300 rounded
+           placeholder:text-gray-400
+           focus:border-brand-500 focus:ring-1 focus:ring-brand-500 focus:outline-none;
+  }
+  .su-help  { @apply mt-1 text-xs text-gray-500; }
+  .su-error { @apply mt-1 text-xs text-red-600; }
+
+  /* ── Alerts ─────────────────────────────────────────────────────────── */
+  .su-alert {
+    @apply flex items-start gap-2 px-4 py-3 rounded border text-sm;
+  }
+  .su-alert-info    { @apply su-alert bg-blue-50   border-blue-200   text-blue-900; }
+  .su-alert-success { @apply su-alert bg-green-50  border-green-200  text-green-900; }
+  .su-alert-warning { @apply su-alert bg-yellow-50 border-yellow-200 text-yellow-900; }
+  .su-alert-error   { @apply su-alert bg-red-50    border-red-200    text-red-900; }
+
+  /* ── Navigation ─────────────────────────────────────────────────────── */
+  .su-nav {
+    @apply bg-chrome-bg text-white flex items-center justify-between
+           px-6 flex-shrink-0;
+    height: var(--su-nav-height);
+  }
+  .su-nav-link {
+    @apply px-3 py-1.5 text-sm text-chrome-ink rounded transition-colors
+           hover:text-white hover:bg-chrome-hover;
+  }
+  .su-nav-link-active { @apply su-nav-link bg-chrome-hover text-white; }
+}
+
+/* ==========================================================================
+   Layout utilities
+   Split map/table layout, carried over from SurecomDB's main.css. The nav
+   offset now reads from a token instead of a hardcoded 56px.
+   ========================================================================== */
+
+@layer utilities {
+  .su-split {
+    display: flex;
+    height: calc(100vh - var(--su-nav-height));
+    overflow: hidden;
+  }
+
+  .su-split-map { flex: 0 0 50%; position: relative; }
+
+  .su-split-map .leaflet-container {
+    height: 100% !important;
+    width: 100%;
+  }
+
+  .su-split-panel {
+    flex: 1;
+    overflow: hidden;
+    border-left: 1px solid var(--su-border);
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+  }
+
+  .su-split-panel-header,
+  .su-split-panel-footer {
+    flex-shrink: 0;
+    background: #fff;
+  }
+  .su-split-panel-header {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--su-border);
+  }
+  .su-split-panel-footer {
+    padding: 0.5rem 1rem;
+    border-top: 1px solid var(--su-border);
+  }
+  .su-split-panel-body { flex: 1; overflow-y: auto; }
+
+  /* Stack rather than split on narrow screens. */
+  @media (max-width: 768px) {
+    .su-split { flex-direction: column; height: auto; }
+    .su-split-map { flex: 0 0 300px; }
+    .su-split-panel { border-left: 0; border-top: 1px solid var(--su-border); }
+  }
+
+  /* Default Leaflet sizing for non-split pages. */
+  .leaflet-container { height: 500px; width: 100%; }
+  .su-map-detail .leaflet-container { height: 400px; }
+  .su-map-picker .leaflet-container { height: 350px; margin-top: 8px; }
+}

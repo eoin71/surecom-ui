@@ -1,0 +1,122 @@
+{% load static surecom_ui %}<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ surecom_ui.app_name }}{% endblock %}</title>
+
+    {# Each app compiles its own stylesheet; see surecom_ui.build. #}
+    {% block ui_stylesheet %}
+        <link rel="stylesheet" href="{% static 'css/app.css' %}">
+    {% endblock %}
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="min-h-full flex flex-col bg-gray-50 text-gray-900 font-sans {% block body_class %}{% endblock %}">
+
+{% block nav %}
+<nav class="su-nav">
+
+    {# ── Brand, plus the cross-app switcher ─────────────────────────────── #}
+    <div class="flex items-center gap-2">
+        <a href="{% block brand_url %}/{% endblock %}"
+           class="font-semibold text-lg tracking-wide text-white hover:text-gray-200">
+            {{ surecom_ui.app_name }}
+        </a>
+
+        {% if surecom_ui.beta %}
+            <span class="su-badge-warning align-super">BETA</span>
+        {% endif %}
+
+        {% if surecom_ui.other_apps %}
+            <details data-su-menu class="relative ml-2">
+                <summary class="su-nav-link list-none flex items-center gap-1 cursor-pointer">
+                    {% icon "chevron-down" css_class="size-3.5" %}
+                    <span class="sr-only">Switch app</span>
+                </summary>
+                <div class="absolute left-0 mt-1 w-56 su-card py-1 z-50">
+                    <p class="px-3 py-1 text-xs font-semibold uppercase tracking-wide text-gray-400">
+                        Surecom apps
+                    </p>
+                    {% for app in surecom_ui.other_apps %}
+                        <a href="{{ app.url }}"
+                           class="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                            {% if app.icon %}{% icon app.icon css_class="size-4 text-gray-400" %}{% endif %}
+                            {{ app.name }}
+                        </a>
+                    {% endfor %}
+                </div>
+            </details>
+        {% endif %}
+    </div>
+
+    {# ── App-specific links, then the user menu ─────────────────────────── #}
+    <div class="flex items-center gap-1">
+        {% block nav_items %}{% endblock %}
+
+        {% if user.is_authenticated %}
+            <details data-su-menu class="relative">
+                <summary class="su-nav-link list-none flex items-center gap-1.5 cursor-pointer">
+                    <span>{{ user.get_username|default:user.email }}</span>
+                    {% if user.is_staff %}
+                        <span class="su-badge-brand">Admin</span>
+                    {% endif %}
+                    {% icon "chevron-down" css_class="size-3.5" %}
+                </summary>
+                <div class="absolute right-0 mt-1 w-48 su-card py-1 z-50">
+                    {% block nav_user_items %}{% endblock %}
+                    {% block logout_form %}
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit"
+                                    class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer">
+                                Sign out
+                            </button>
+                        </form>
+                    {% endblock %}
+                </div>
+            </details>
+        {% else %}
+            {% block nav_anonymous %}{% endblock %}
+        {% endif %}
+    </div>
+</nav>
+{% endblock %}
+
+{% block messages %}
+    {% include "surecom_ui/_messages.html" %}
+{% endblock %}
+
+{# Pages that manage their own full-height layout (e.g. a split map view)
+   should override `main_wrapper` to drop the centred container. #}
+{% block main_wrapper %}
+    <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6">
+        {% block content %}{% endblock %}
+    </main>
+{% endblock %}
+
+{% block footer %}
+    {% include "surecom_ui/_footer.html" %}
+{% endblock %}
+
+<script>
+    // Dismissible alerts, without pulling in a JS framework.
+    document.addEventListener('click', function (event) {
+        const button = event.target.closest('[data-su-dismiss]');
+        if (button) {
+            const alert = button.closest('[data-su-alert]');
+            if (alert) alert.remove();
+        }
+    });
+
+    // Close any open <details> menu when clicking elsewhere.
+    document.addEventListener('click', function (event) {
+        document.querySelectorAll('details[data-su-menu][open]').forEach(function (menu) {
+            if (!menu.contains(event.target)) menu.removeAttribute('open');
+        });
+    });
+</script>
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,19 @@
+{% comment %}
+A page title with optional subtitle and right-aligned actions.
+
+    {% include "surecom_ui/components/page_header.html" with title="Sites" subtitle="1,284 records" %}
+
+Pass actions via the `actions` block pattern instead if you need markup:
+wrap the include in your own flex row, or use this with `{% with %}`.
+{% endcomment %}
+<div class="flex items-start justify-between gap-4 mb-6">
+    <div>
+        <h1 class="text-2xl font-semibold tracking-tight">{{ title }}</h1>
+        {% if subtitle %}
+            <p class="mt-1 text-sm text-gray-500">{{ subtitle }}</p>
+        {% endif %}
+    </div>
+    {% if action_url and action_text %}
+        <a href="{{ action_url }}" class="su-btn-primary shrink-0">{{ action_text }}</a>
+    {% endif %}
+</div>

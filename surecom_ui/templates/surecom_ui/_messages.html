@@ -1,0 +1,15 @@
+{% load surecom_ui %}
+{% if messages %}
+    <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 pt-4 space-y-2">
+        {% for message in messages %}
+            <div data-su-alert class="su-alert-{{ message.tags|message_variant }}">
+                <div class="flex-1">{{ message }}</div>
+                <button type="button" data-su-dismiss
+                        class="shrink-0 opacity-60 hover:opacity-100 cursor-pointer"
+                        aria-label="Dismiss">
+                    {% icon "x-mark" css_class="size-4" %}
+                </button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}

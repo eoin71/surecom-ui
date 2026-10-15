@@ -1,0 +1,5 @@
+{% load surecom_ui %}
+<a href="{{ url }}" class="{% if active %}su-nav-link-active{% else %}su-nav-link{% endif %} inline-flex items-center gap-1.5"{% if active %} aria-current="page"{% endif %}>
+    {% if icon_name %}{% icon icon_name css_class="size-4" %}{% endif %}
+    {{ text }}
+</a>
