@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "surecom-ui"
-version = "0.1.1"
+version = "0.1.2"
 description = "Shared design system and base templates for Surecom internal Django apps"
 readme = "README.md"
 requires-python = ">=3.11"

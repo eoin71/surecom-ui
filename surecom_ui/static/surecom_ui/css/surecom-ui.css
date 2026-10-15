@@ -32,6 +32,11 @@
   --su-border: oklch(0.92 0.004 286.3);
   --su-highlight: oklch(0.97 0.08 100);
   --su-nav-height: 3.5rem;
+
+  /* The nav must out-stack Leaflet, whose control containers
+     (.leaflet-top / .leaflet-bottom) sit at z-index 1000. Without this the
+     nav's dropdown menus render beneath any map on the page. */
+  --su-z-nav: 1100;
 }
 
 /* ==========================================================================
@@ -139,6 +144,11 @@
     @apply bg-chrome-bg text-white flex items-center justify-between
            px-6 flex-shrink-0;
     height: var(--su-nav-height);
+    /* Establishes a stacking context above Leaflet so the dropdown menus,
+       which overflow the nav, paint over the map rather than under it.
+       position is required for z-index to take effect at all. */
+    position: relative;
+    z-index: var(--su-z-nav);
   }
   .su-nav-link,
   .su-nav-link-active {
