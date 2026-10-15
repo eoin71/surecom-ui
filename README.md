@@ -86,7 +86,7 @@ Run the build before `collectstatic`. It deliberately avoids importing Django,
 so it works at image-build time before any environment variables exist:
 
 ```dockerfile
-ARG TAILWIND_VERSION=v4.1.14
+ARG TAILWIND_VERSION=v4.3.3
 RUN curl -sSLo /usr/local/bin/tailwindcss \
       https://github.com/tailwindlabs/tailwindcss/releases/download/${TAILWIND_VERSION}/tailwindcss-linux-x64 \
     && chmod +x /usr/local/bin/tailwindcss
@@ -176,6 +176,29 @@ CSS classes, all prefixed `su-`:
 - **Alerts** — `su-alert-info|success|warning|error`
 - **Nav** — `su-nav`, `su-nav-link`, `su-nav-link-active`
 - **Split layout** — `su-split`, `su-split-map`, `su-split-panel`, `su-split-panel-header|body|footer`
+
+A variant class is self-contained — write `class="su-btn-primary"`, not
+`class="su-btn su-btn-primary"`.
+
+### Extending the CSS: the `@apply` constraint
+
+Tailwind v4's `@apply` accepts **utility** classes only. It cannot reference a
+custom component class, so this fails to compile:
+
+```css
+.su-btn-primary { @apply su-btn bg-brand-600; }   /* Error: Cannot apply
+                                                     unknown utility class */
+```
+
+Shared properties are therefore declared once across a selector list, with each
+variant adding only what differs:
+
+```css
+.su-btn, .su-btn-primary, .su-btn-secondary { @apply inline-flex px-3 py-1.5 …; }
+.su-btn-primary { @apply bg-brand-600 text-white; }
+```
+
+Follow that pattern when adding variants to buttons, badges, alerts or nav links.
 
 Template partials:
 

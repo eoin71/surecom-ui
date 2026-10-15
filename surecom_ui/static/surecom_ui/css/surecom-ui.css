@@ -22,9 +22,6 @@
   --color-chrome-hover: oklch(0.37 0.013 285.8);
   --color-chrome-ink:   oklch(0.87 0.006 286.3);
 
-  /* ── Layout ─────────────────────────────────────────────────────────── */
-  --spacing-nav: 3.5rem;
-
   /* ── Type ───────────────────────────────────────────────────────────── */
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
                "Helvetica Neue", Arial, sans-serif;
@@ -44,8 +41,15 @@
 @layer components {
 
   /* ── Buttons ──────────────────────────────────────────────────────────
-     Base class carries shape and interaction; a variant supplies colour. */
-  .su-btn {
+     Tailwind v4's @apply only accepts utility classes, so a variant cannot
+     @apply the base class. Shared shape is declared once via a selector
+     list; each variant then only supplies colour. Using a variant alone is
+     enough — `class="su-btn-primary"`, no need for `su-btn` as well. */
+  .su-btn,
+  .su-btn-primary,
+  .su-btn-secondary,
+  .su-btn-danger,
+  .su-btn-ghost {
     @apply inline-flex items-center justify-center gap-1.5
            px-3 py-1.5 text-sm font-medium rounded
            transition-colors cursor-pointer
@@ -54,10 +58,10 @@
            disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
-  .su-btn-primary  { @apply su-btn bg-brand-600 text-white hover:bg-brand-700; }
-  .su-btn-secondary{ @apply su-btn bg-white text-gray-700 border border-gray-300 hover:bg-gray-50; }
-  .su-btn-danger   { @apply su-btn bg-red-600 text-white hover:bg-red-700; }
-  .su-btn-ghost    { @apply su-btn text-gray-600 hover:text-gray-900 hover:bg-gray-100; }
+  .su-btn-primary   { @apply bg-brand-600 text-white hover:bg-brand-700; }
+  .su-btn-secondary { @apply bg-white text-gray-700 border border-gray-300 hover:bg-gray-50; }
+  .su-btn-danger    { @apply bg-red-600 text-white hover:bg-red-700; }
+  .su-btn-ghost     { @apply text-gray-600 hover:text-gray-900 hover:bg-gray-100; }
 
   /* ── Cards ──────────────────────────────────────────────────────────── */
   .su-card {
@@ -72,14 +76,20 @@
   }
 
   /* ── Badges ─────────────────────────────────────────────────────────── */
-  .su-badge {
+  .su-badge,
+  .su-badge-neutral,
+  .su-badge-brand,
+  .su-badge-warning,
+  .su-badge-success,
+  .su-badge-danger {
     @apply inline-flex items-center px-1.5 py-0.5 text-xs font-semibold rounded;
   }
-  .su-badge-neutral { @apply su-badge bg-gray-100 text-gray-700; }
-  .su-badge-brand   { @apply su-badge bg-brand-500 text-white; }
-  .su-badge-warning { @apply su-badge bg-yellow-400 text-black; }
-  .su-badge-success { @apply su-badge bg-green-100 text-green-800; }
-  .su-badge-danger  { @apply su-badge bg-red-100 text-red-800; }
+
+  .su-badge-neutral { @apply bg-gray-100 text-gray-700; }
+  .su-badge-brand   { @apply bg-brand-500 text-white; }
+  .su-badge-warning { @apply bg-yellow-400 text-black; }
+  .su-badge-success { @apply bg-green-100 text-green-800; }
+  .su-badge-danger  { @apply bg-red-100 text-red-800; }
 
   /* ── Tables ─────────────────────────────────────────────────────────── */
   .su-table { @apply w-full text-sm text-left border-collapse; }
@@ -111,13 +121,18 @@
   .su-error { @apply mt-1 text-xs text-red-600; }
 
   /* ── Alerts ─────────────────────────────────────────────────────────── */
-  .su-alert {
+  .su-alert,
+  .su-alert-info,
+  .su-alert-success,
+  .su-alert-warning,
+  .su-alert-error {
     @apply flex items-start gap-2 px-4 py-3 rounded border text-sm;
   }
-  .su-alert-info    { @apply su-alert bg-blue-50   border-blue-200   text-blue-900; }
-  .su-alert-success { @apply su-alert bg-green-50  border-green-200  text-green-900; }
-  .su-alert-warning { @apply su-alert bg-yellow-50 border-yellow-200 text-yellow-900; }
-  .su-alert-error   { @apply su-alert bg-red-50    border-red-200    text-red-900; }
+
+  .su-alert-info    { @apply bg-blue-50   border-blue-200   text-blue-900; }
+  .su-alert-success { @apply bg-green-50  border-green-200  text-green-900; }
+  .su-alert-warning { @apply bg-yellow-50 border-yellow-200 text-yellow-900; }
+  .su-alert-error   { @apply bg-red-50    border-red-200    text-red-900; }
 
   /* ── Navigation ─────────────────────────────────────────────────────── */
   .su-nav {
@@ -125,11 +140,13 @@
            px-6 flex-shrink-0;
     height: var(--su-nav-height);
   }
-  .su-nav-link {
+  .su-nav-link,
+  .su-nav-link-active {
     @apply px-3 py-1.5 text-sm text-chrome-ink rounded transition-colors
            hover:text-white hover:bg-chrome-hover;
   }
-  .su-nav-link-active { @apply su-nav-link bg-chrome-hover text-white; }
+
+  .su-nav-link-active { @apply bg-chrome-hover text-white; }
 }
 
 /* ==========================================================================
