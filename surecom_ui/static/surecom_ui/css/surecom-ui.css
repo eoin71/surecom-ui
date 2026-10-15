@@ -39,6 +39,10 @@
   --su-z-nav: 1100;
 }
 
+@keyframes su-spin {
+  to { transform: rotate(360deg); }
+}
+
 /* ==========================================================================
    Components
    ========================================================================== */
@@ -164,6 +168,23 @@
   .su-fieldset-title {
     @apply text-base font-semibold text-gray-900
            border-b border-gray-200 pb-2 mb-4;
+  }
+
+  /* ── Spinner ────────────────────────────────────────────────────────── */
+  .su-spinner {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    border: 3px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 9999px;
+    animation: su-spin 0.75s linear infinite;
+  }
+
+  .su-spinner-sm {
+    width: 0.875rem;
+    height: 0.875rem;
+    border-width: 2px;
   }
 
   /* ── Alerts ─────────────────────────────────────────────────────────── */
