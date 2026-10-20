@@ -14,7 +14,7 @@ without a `node_modules` resolution problem.
 Add to each app's `requirements.txt`:
 
 ```
-surecom-ui @ git+https://github.com/eoin71/surecom-ui@v0.1.0
+surecom-ui @ git+https://github.com/eoin71/surecom-ui@v0.2.0
 ```
 
 Pin a tag, not a branch, so the two apps can be upgraded independently.
@@ -249,6 +249,101 @@ are approximations — each is annotated in that file. The notable ones:
 | `save` | `document-arrow-down` | floppy/save metaphor |
 | `hospital` | `building-office-2` | hospital meaning |
 | `gear-fill` / `lock-fill` | `cog-6-tooth` / `lock-closed` | the solid variant — only outline ships |
+
+---
+
+## Microsoft 365 sign-in (`surecom_ui.auth`)
+
+Optional. Both apps sign in through the company Entra ID tenant using
+django-allauth's Microsoft provider:
+
+- **Microsoft only.** No passwords, signup or password reset (`SOCIALACCOUNT_ONLY`).
+- **Company addresses only.** Sign-ins whose Microsoft address isn't in
+  `ALLOWED_EMAIL_DOMAINS` are rejected, which also keeps out guest accounts.
+- **Existing users are linked by email** on their first sign-in, so they keep
+  their staff rights and history.
+- **One break-glass superuser** can still sign in with a password at
+  `/admin/break-glass/`, in case Entra or the client secret breaks.
+- `/admin/` sends signed-out visitors to Microsoft sign-in. `is_staff` is still
+  ticked by hand in each app's admin.
+
+Each app keeps its own users. Signing in to one app while signed in to M365
+signs the user straight in to the other, with no password prompt.
+
+### Add it to an app
+
+```
+surecom-ui[auth] @ git+https://github.com/eoin71/surecom-ui@v0.2.0
+```
+
+`settings.py`:
+
+```python
+INSTALLED_APPS = [
+    ...
+    "surecom_ui",
+    "surecom_ui.auth",          # before allauth, so the shared templates win
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.microsoft",
+]
+
+MIDDLEWARE = [
+    ...
+    "allauth.account.middleware.AccountMiddleware",
+]
+
+SURECOM_UI_BASE_TEMPLATE = "sites/base.html"   # sign-in pages keep the app's nav
+
+from surecom_ui.auth.settings import entra_settings
+globals().update(entra_settings(debug=DEBUG))
+```
+
+`urls.py`, **before** `admin/` (the admin's catch-all would swallow break-glass):
+
+```python
+from surecom_ui.auth.urls import entra_urlpatterns
+
+urlpatterns = [
+    *entra_urlpatterns(admin.site),
+    path("admin/", admin.site.urls),
+    ...
+]
+```
+
+The base template's sign-out button already posts to allauth's sign-out URL.
+
+### Environment variables
+
+| Variable | Value |
+|---|---|
+| `MICROSOFT_TENANT_ID` | Directory (tenant) ID |
+| `MICROSOFT_CLIENT_ID` | Application (client) ID |
+| `MICROSOFT_CLIENT_SECRET` | Client secret **value** |
+| `ALLOWED_EMAIL_DOMAINS` | Comma-separated, e.g. `surecom.ie` |
+
+Missing values fail closed: an unset tenant is refused by Microsoft (never
+allauth's "any Microsoft account" default), and an empty allowlist rejects
+everyone. `manage.py check` warns about both (`surecom_auth.W001`/`W002`).
+
+### Entra ID app registration (once, shared by both apps)
+
+1. **App registrations → New registration**, single tenant.
+2. **Redirect URIs (Web)**, one per app and environment:
+   `https://<domain>/accounts/microsoft/login/callback/`
+   (plus `http://localhost:<port>/accounts/microsoft/login/callback/` for dev).
+3. **Certificates & secrets → New client secret.** Set a reminder before it
+   expires (24 months at most): renewing means updating
+   `MICROSOFT_CLIENT_SECRET` in every app.
+4. **API permissions:** keep Microsoft Graph `User.Read`, then **Grant admin consent**.
+
+### Tests
+
+```
+pip install -e ".[auth]"
+python -m django test tests --settings=tests.settings
+```
 
 ---
 

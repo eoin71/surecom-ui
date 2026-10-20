@@ -1,0 +1,12 @@
+{% extends "surecom_ui/auth/layout.html" %}
+{% load surecom_ui %}
+
+{% block auth_title %}Account disabled{% endblock %}
+{% block auth_icon %}{% icon "lock-closed" css_class="size-5 text-gray-400" %}{% endblock %}
+{% block auth_heading %}Account disabled{% endblock %}
+
+{% block auth_body %}
+  <p class="text-sm text-gray-600">
+    Your account for {{ surecom_ui.app_name }} has been disabled. Contact an administrator if you need access.
+  </p>
+{% endblock %}

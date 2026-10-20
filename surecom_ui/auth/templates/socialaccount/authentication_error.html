@@ -1,0 +1,13 @@
+{% extends "surecom_ui/auth/layout.html" %}
+{% load surecom_ui %}
+
+{% block auth_title %}Sign-in failed{% endblock %}
+{% block auth_icon %}{% icon "exclamation-triangle" css_class="size-5 text-gray-400" %}{% endblock %}
+{% block auth_heading %}Sign-in failed{% endblock %}
+
+{% block auth_body %}
+  <p class="mb-4 text-sm text-gray-600">
+    Microsoft sign-in didn't complete. Try again, and if it keeps failing, contact an administrator.
+  </p>
+  <a href="{% url 'account_login' %}" class="su-btn-primary w-full">Try again</a>
+{% endblock %}

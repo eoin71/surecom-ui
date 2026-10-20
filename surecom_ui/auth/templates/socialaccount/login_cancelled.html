@@ -1,0 +1,11 @@
+{% extends "surecom_ui/auth/layout.html" %}
+{% load surecom_ui %}
+
+{% block auth_title %}Sign-in cancelled{% endblock %}
+{% block auth_icon %}{% icon "x-mark" css_class="size-5 text-gray-400" %}{% endblock %}
+{% block auth_heading %}Sign-in cancelled{% endblock %}
+
+{% block auth_body %}
+  <p class="mb-4 text-sm text-gray-600">You cancelled signing in with Microsoft.</p>
+  <a href="{% url 'account_login' %}" class="su-btn-primary w-full">Try again</a>
+{% endblock %}

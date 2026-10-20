@@ -1,0 +1,26 @@
+{% extends surecom_ui.base_template %}
+{% load surecom_ui %}
+{% comment %}
+    Centred single-card layout for the sign-in pages. Extends the app's own
+    base (SURECOM_UI_BASE_TEMPLATE) so its nav is kept.
+{% endcomment %}
+
+{% block title %}{% block auth_title %}{% endblock %} - {{ surecom_ui.app_name }}{% endblock %}
+
+{% block main_wrapper %}
+<main class="flex-1 flex items-center justify-center px-4 py-8">
+  <div class="w-full max-w-sm">
+    <div class="su-card">
+      <div class="su-card-header">
+        <h1 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+          {% block auth_icon %}{% icon "arrow-right-end-on-rectangle" css_class="size-5 text-gray-400" %}{% endblock %}
+          {% block auth_heading %}{% endblock %}
+        </h1>
+      </div>
+      <div class="su-card-body">
+        {% block auth_body %}{% endblock %}
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}

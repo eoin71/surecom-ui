@@ -1,0 +1,15 @@
+{% extends "surecom_ui/auth/layout.html" %}
+{% load socialaccount %}
+
+{% block auth_title %}Sign in{% endblock %}
+{% block auth_heading %}Sign in{% endblock %}
+
+{% block auth_body %}
+  <p class="mb-4 text-sm text-gray-600">Use your company Microsoft 365 account.</p>
+
+  {# POST so the sign-in can't be started by a link from another site; keeps ?next= #}
+  <form method="post" action="{% provider_login_url 'microsoft' process='login' %}">
+    {% csrf_token %}
+    <button type="submit" class="su-btn-primary w-full">Sign in with Microsoft</button>
+  </form>
+{% endblock %}

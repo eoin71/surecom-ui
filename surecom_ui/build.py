@@ -29,6 +29,9 @@ import tempfile
 PACKAGE_DIR = pathlib.Path(__file__).resolve().parent
 PACKAGE_CSS = PACKAGE_DIR / "static" / "surecom_ui" / "css" / "surecom-ui.css"
 PACKAGE_TEMPLATES = PACKAGE_DIR / "templates"
+# Shared sign-in pages (surecom_ui.auth). Scanned even when the app doesn't use
+# them: a few unused utilities cost less than unstyled pages when it does.
+AUTH_TEMPLATES = PACKAGE_DIR / "auth" / "templates"
 
 
 def _as_css_path(path: pathlib.Path) -> str:
@@ -43,6 +46,7 @@ def build_input_css(sources: list[pathlib.Path]) -> str:
         "",
         "/* Scan this package's own templates for utilities used by shared components. */",
         f'@source "{_as_css_path(PACKAGE_TEMPLATES)}";',
+        f'@source "{_as_css_path(AUTH_TEMPLATES)}";',
     ]
     if sources:
         lines.append("")

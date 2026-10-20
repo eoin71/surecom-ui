@@ -66,7 +66,7 @@
                 <div class="absolute right-0 mt-1 w-48 su-card py-1 z-50">
                     {% block nav_user_items %}{% endblock %}
                     {% block logout_form %}
-                        <form method="post" action="{% url 'logout' %}">
+                        <form method="post" action="{{ surecom_ui.logout_url }}">
                             {% csrf_token %}
                             <button type="submit"
                                     class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer">
