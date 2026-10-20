@@ -17,24 +17,31 @@
 {% block nav %}
 <nav class="su-nav">
 
+    {% comment %}
+        One row at every width (.su-split sizes itself from --su-nav-height).
+        Below sm the app's links fold into a menu button, the user menu shows
+        an icon instead of the email, and the badges are hidden.
+    {% endcomment %}
+
     {# ── Brand, plus the cross-app switcher ─────────────────────────────── #}
-    <div class="flex items-center gap-2">
+    <div class="flex min-w-0 items-center gap-2">
         <a href="{% block brand_url %}/{% endblock %}"
-           class="font-semibold text-lg tracking-wide text-white hover:text-gray-200">
+           class="truncate font-semibold text-lg tracking-wide text-white hover:text-gray-200">
             {{ surecom_ui.app_name }}
         </a>
 
         {% if surecom_ui.beta %}
-            <span class="su-badge-warning align-super">BETA</span>
+            <span class="su-badge-warning align-super hidden sm:inline-flex">BETA</span>
         {% endif %}
 
         {% if surecom_ui.other_apps %}
-            <details data-su-menu class="relative ml-2">
+            {# Phones: not positioned, so the menu anchors to the nav's left edge #}
+            <details data-su-menu class="sm:relative sm:ml-2">
                 <summary class="su-nav-link list-none flex items-center gap-1 cursor-pointer">
                     {% icon "chevron-down" css_class="size-3.5" %}
                     <span class="sr-only">Switch app</span>
                 </summary>
-                <div class="absolute left-0 mt-1 w-56 su-card py-1 z-50">
+                <div class="absolute left-4 top-full sm:left-0 sm:top-auto mt-1 w-56 su-card py-1 z-50">
                     <p class="px-3 py-1 text-xs font-semibold uppercase tracking-wide text-gray-400">
                         Surecom apps
                     </p>
@@ -51,19 +58,37 @@
     </div>
 
     {# ── App-specific links, then the user menu ─────────────────────────── #}
-    <div class="flex items-center gap-1">
-        {% block nav_items %}{% endblock %}
+    <div class="flex shrink-0 items-center gap-1">
+        {# Phones only; hidden by the script below when the app has no links #}
+        <button type="button" data-su-nav-toggle aria-controls="su-nav-items" aria-expanded="false"
+                class="su-nav-link sm:hidden flex items-center cursor-pointer">
+            {% icon "bars-3" css_class="size-5" %}
+            <span class="sr-only">Menu</span>
+        </button>
+        {# Inline from sm up; below sm a dropdown opened by the button above #}
+        <div id="su-nav-items"
+             class="hidden data-[open]:flex sm:flex
+                    absolute right-4 top-full mt-1 w-56 flex-col items-stretch gap-1 rounded-md bg-chrome-bg p-2 shadow-lg
+                    sm:static sm:w-auto sm:mt-0 sm:flex-row sm:items-center sm:bg-transparent sm:p-0 sm:shadow-none">
+            {% block nav_items %}{% endblock %}
+        </div>
 
         {% if user.is_authenticated %}
             <details data-su-menu class="relative">
                 <summary class="su-nav-link list-none flex items-center gap-1.5 cursor-pointer">
-                    <span>{{ user.get_username|default:user.email }}</span>
+                    {% icon "user-circle" css_class="size-5 sm:hidden" %}
+                    <span class="hidden sm:inline max-w-64 truncate">{{ user.get_username|default:user.email }}</span>
                     {% if user.is_staff %}
-                        <span class="su-badge-brand">Admin</span>
+                        <span class="su-badge-brand hidden sm:inline-flex">Admin</span>
                     {% endif %}
                     {% icon "chevron-down" css_class="size-3.5" %}
+                    <span class="sr-only sm:hidden">Account</span>
                 </summary>
                 <div class="absolute right-0 mt-1 w-48 su-card py-1 z-50">
+                    {# Phones show an icon in the nav, so say who's signed in here #}
+                    <p class="sm:hidden px-3 py-2 text-xs text-gray-500 border-b border-gray-100 truncate">
+                        {{ user.get_username|default:user.email }}{% if user.is_staff %} · Admin{% endif %}
+                    </p>
                     {% block nav_user_items %}{% endblock %}
                     {% block logout_form %}
                         <form method="post" action="{{ surecom_ui.logout_url }}">
@@ -120,6 +145,27 @@
             if (!menu.contains(event.target)) menu.removeAttribute('open');
         });
     });
+
+    // Phone nav menu: toggles the app's links, closes on a click elsewhere.
+    (function () {
+        const toggle = document.querySelector('[data-su-nav-toggle]');
+        const items = document.getElementById('su-nav-items');
+        if (!toggle || !items) return;
+        if (!items.querySelector('a, button')) {
+            toggle.remove();  // the app has no links for this page or user
+            return;
+        }
+        function setOpen(open) {
+            items.toggleAttribute('data-open', open);
+            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
+        toggle.addEventListener('click', function () {
+            setOpen(!items.hasAttribute('data-open'));
+        });
+        document.addEventListener('click', function (event) {
+            if (!toggle.contains(event.target) && !items.contains(event.target)) setOpen(false);
+        });
+    })();
 </script>
 
 {% block extra_js %}{% endblock %}

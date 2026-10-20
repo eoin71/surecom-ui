@@ -129,7 +129,7 @@ RUN python -m surecom_ui.build --out static/css/app.css \
 | `body_class` | Extra classes on `<body>` |
 | `nav` | Replace the whole nav |
 | `brand_url` | Where the brand link points |
-| `nav_items` | App-specific nav links |
+| `nav_items` | App-specific nav links. Below `sm` (640px) they fold into a menu button, which is hidden when the block renders no links |
 | `nav_user_items` | Extra entries in the user dropdown |
 | `logout_form` | Override if not using Django's `logout` URL (allauth needs this) |
 | `nav_anonymous` | Shown instead of the user menu when logged out |
