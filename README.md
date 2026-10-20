@@ -340,6 +340,21 @@ everyone. `manage.py check` warns about both (`surecom_auth.W001`/`W002`).
 
 ### Tests
 
+Apps can run the real sign-in flow in their own tests, with only Microsoft's
+endpoints mocked:
+
+```python
+from surecom_ui.auth.testing import MicrosoftSignInMixin
+
+@MicrosoftSignInMixin.configured          # test tenant; "surecom.ie" allowed
+class SignInTests(MicrosoftSignInMixin, TestCase):
+    def test_first_sign_in(self):
+        self.sign_in("aoife@surecom.ie")
+        self.assertTrue(self.signed_in_user().is_authenticated)
+```
+
+The package's own tests:
+
 ```
 pip install -e ".[auth]"
 python -m django test tests --settings=tests.settings

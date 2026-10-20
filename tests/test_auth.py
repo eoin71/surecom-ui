@@ -1,72 +1,15 @@
-import json
-from unittest import mock
-from urllib.parse import parse_qs, urlparse
-
 from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.messages import get_messages
 from django.core.checks import run_checks
 from django.test import TestCase, override_settings
 
-from surecom_ui.auth.adapters import TenantSocialAccountAdapter, is_allowed_email
+from surecom_ui.auth.adapters import is_allowed_email
 from surecom_ui.auth.backends import SuperuserPasswordBackend
 from surecom_ui.auth.settings import MISSING_TENANT, entra_settings, parse_domains
+from surecom_ui.auth.testing import MicrosoftSignInMixin, graph_profile
 
 User = get_user_model()
-
-LOGIN_URL = "/accounts/microsoft/login/"
-CALLBACK_URL = "/accounts/microsoft/login/callback/"
-
-
-class FakeResponse:
-    """Just enough of requests.Response for allauth's OAuth2 client and the Graph call"""
-
-    def __init__(self, data, status_code=200):
-        self.status_code = status_code
-        self.text = json.dumps(data)
-        self.content = self.text.encode()
-        self.headers = {"content-type": "application/json"}
-        self._data = data
-
-    def json(self):
-        return self._data
-
-    def raise_for_status(self):
-        pass
-
-
-def graph_profile(email, **overrides):
-    profile = {
-        "id": f"id-{email}",
-        "mail": email,
-        "userPrincipalName": email,
-        "givenName": "Aoife",
-        "surname": "Byrne",
-        "displayName": "Aoife Byrne",
-        "mailNickname": email.split("@")[0],
-    }
-    profile.update(overrides)
-    return profile
-
-
-class MicrosoftSignInMixin:
-    """Runs the real allauth flow, with Microsoft's token and Graph endpoints mocked"""
-
-    def sign_in(self, profile, next_url=None):
-        start = self.client.post(LOGIN_URL + (f"?next={next_url}" if next_url else ""))
-        self.assertEqual(start.status_code, 302)
-        self.authorize_url = start["Location"]
-        state = parse_qs(urlparse(self.authorize_url).query)["state"][0]
-
-        session = mock.MagicMock()
-        session.__enter__.return_value = session  # newer allauth uses `with session:`
-        session.request.return_value = FakeResponse({"access_token": "token", "token_type": "Bearer"})
-        session.get.return_value = FakeResponse(profile)
-        with mock.patch.object(TenantSocialAccountAdapter, "get_requests_session", return_value=session):
-            return self.client.get(CALLBACK_URL, {"code": "code", "state": state})
-
-    def signed_in_user(self):
-        return self.client.get("/").wsgi_request.user
 
 
 class SettingsHelperTests(TestCase):
@@ -106,6 +49,7 @@ class SuperuserPasswordBackendTests(TestCase):
         self.assertEqual(SuperuserPasswordBackend().get_user(self.staff.pk), self.staff)
 
 
+@MicrosoftSignInMixin.configured
 class MicrosoftSignInTests(MicrosoftSignInMixin, TestCase):
     def test_authorize_url_uses_company_tenant(self):
         self.sign_in(graph_profile("aoife@surecom.ie"))
